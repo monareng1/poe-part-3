@@ -1,0 +1,54 @@
+package quickcheck;
+
+import java.util.List;
+import java.util.ArrayList; // Added in case you need to initialize empty lists
+
+public class MessageManager {
+
+    public String displayAllStoredMessageDetails() {
+        List<Message> stored = Message.getStoredMessages();
+        
+        // Safety check if the list is null or empty
+        if (stored == null || stored.isEmpty()) {
+            return "No stored messages found.";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("\nStored Message Details\n");
+        
+        for (Message msg : stored) {
+            if (msg != null) { // Null check to prevent NullPointerException
+                sb.append("Recipient: ").append(msg.getRecipient()).append("\n");
+                sb.append("Message: ").append(msg.getMessageText()).append("\n");
+            }
+        }
+        
+        return sb.toString();
+    }
+
+    public String displayLongestMessage() {
+        List<Message> sent = Message.getSentMessages();
+        List<Message> stored = Message.getStoredMessages();
+        List<Message> disregarded = Message.getDisregardedMessages();
+
+        // Combine all lists into one master list to search through
+        List<Message> allMessages = new ArrayList<>();
+        if (sent != null) allMessages.addAll(sent);
+        if (stored != null) allMessages.addAll(stored);
+        if (disregarded != null) allMessages.addAll(disregarded);
+
+        String longest = "";
+
+        for (Message msg : allMessages) {
+            if (msg != null && msg.getMessageText() != null) {
+                // Fixed the incomplete condition from line 28
+                if (msg.getMessageText().length() > longest.length()) {
+                    longest = msg.getMessageText();
+                }
+            }
+        }
+
+        // Return a fallback message if no text was found
+        return longest.isEmpty() ? "No messages found." : longest;
+    }
+}
